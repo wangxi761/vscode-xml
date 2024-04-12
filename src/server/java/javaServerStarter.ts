@@ -29,9 +29,9 @@ function prepareParams(requirements: RequirementsData, xmlJavaExtensions: string
   const params: string[] = [];
   if (DEBUG) {
     if (process.env['SUSPEND_SERVER'] === 'true') {
-      params.push('-agentlib:jdwp=transport=dt_socket,server=y,address=1054');
+      params.push('-agentlib:jdwp=transport=dt_socket,server=y,address=*:10054');
     } else {
-      params.push('-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1054,quiet=y');
+      params.push('-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:10054,quiet=y');
     }
   }
   let vmargsCheck = workspace.getConfiguration().inspect(xmlServerVmargs).workspaceValue;
@@ -87,8 +87,8 @@ function prepareParams(requirements: RequirementsData, xmlJavaExtensions: string
     params.push('-noverify');
   }
   parseVMargs(params, vmargs);
-  const server_home: string = path.resolve(__dirname, '../server');
-  const launchersFound: Array<string> = glob.sync('**/org.eclipse.lemminx*-uber.jar', { cwd: server_home });
+  const server_home: string = path.resolve(__dirname, String.raw`E:\Workspace\github\fcl\fcl-language-server\target`);
+  const launchersFound: Array<string> = glob.sync('**/fcl-language-server*.jar', { cwd: server_home });
   if (launchersFound.length) {
     let xmlJavaExtensionsClasspath = '';
     if (xmlJavaExtensions.length > 0) {
@@ -96,7 +96,7 @@ function prepareParams(requirements: RequirementsData, xmlJavaExtensions: string
       xmlJavaExtensionsClasspath = pathSeparator + xmlJavaExtensions.join(pathSeparator);
     }
     params.push('-cp'); params.push(path.resolve(server_home, launchersFound[0]) + xmlJavaExtensionsClasspath);
-    params.push('org.eclipse.lemminx.XMLServerLauncher');
+    params.push('org.xiwang.fcl.FCLServerLauncher');
   } else {
     return null;
   }
